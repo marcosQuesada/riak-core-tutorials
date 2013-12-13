@@ -352,10 +352,25 @@ Start the console.
 Open another terminal window and run the `replay` script with either my provided access log or your own.  Remember, the log must be in combined log format.
 
     gunzip -c progski.access.log.gz | ./replay progski
+    Pending to solve progski!!!
 
 You should see a bunch of two-tuple's fly by in the console.  This is showing the vnode's index (partition) that the incoming entry is being handled on.  Notice how the number is constantly changing, this shows that work is being distributed.  Keep in mind this won't be the fastest cause it's a new HTTP connection for each entry.  I'm thinking of implementing persistent connections for a future post.
 
 After the script has finished (or kill it early if you want, it won't hurt anything) go back to the console and ask for some stats.
+
+    Basic Workaround to test basic functionality
+    (rts@127.0.0.1)2> rts:set("progski", "total_reqs",56789).
+    ok
+    (rts@127.0.0.1)3> rts:get("progski", "total_reqs").
+    {ok,56789}
+    (rts@127.0.0.1)4> rts:incr("progski", "total_reqs").
+    ok
+    (rts@127.0.0.1)5> rts:get("progski", "total_reqs").
+    {ok,56790}
+    (rts@127.0.0.1)6> rts:incrby("progski", "total_reqs", 10).
+    ok
+    (rts@127.0.0.1)7> rts:get("progski", "total_reqs").
+    {ok,56800}
 
     (rts@127.0.0.1)2> rts:get("progski", "total_reqs").
     {ok,10809}
@@ -378,10 +393,10 @@ Now lets turn it up a notch test this systems supposed "real time" moniker.  Fir
 
 Now start your nodes and join them.
 
-    for d in dev/dev*; do $d/bin/rts start; done
-    for d in dev/dev*; do $d/bin/rts ping; done
-    for d in dev/dev{2,3}; do $d/bin/rts-admin join rts1@127.0.0.1; done
-    ./dev/dev1/bin/rts-admin ringready
+    make dev-start-nodes
+    make dev-ping-nodes
+    make dev-join-nodes
+    make dev-ring-ready
 
 Now run replay with the `--devrel` option.
 
