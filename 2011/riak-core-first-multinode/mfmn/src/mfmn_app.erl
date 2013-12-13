@@ -12,7 +12,8 @@
 start(_StartType, _StartArgs) ->
     case mfmn_sup:start_link() of
         {ok, Pid} ->
-            ok = riak_core:register_vnode_module(mfmn_vnode),
+          %% Register our vnode module with Riak Core.
+            ok = riak_core:register(mfmn, [{vnode_module, mfmn_vnode}]),
             ok = riak_core_node_watcher:service_up(mfmn, self()),
             {ok, Pid};
         {error, Reason} ->

@@ -80,30 +80,30 @@ This command is very similar to `rel` but instead creates 3 separate instances u
 
 Now, lets start all the nodes.
 
-    for d in dev/dev*; do $d/bin/mfmn start; done
+    make dev-start-nodes
 
 There's no output so let's make sure they are indeed up.
 
-    for d in dev/dev*; do $d/bin/mfmn ping; done
+    make dev-ping-nodes
 
 You should see three `pong` replies.  Now, at this point, it is worth saying that you have three **INDIVIDUAL** mfmn nodes running.  They are **NOT** aware of each other yet and if this were a Riak KV cluster you could store data in one node and the other node will have no idea it's there.  In order to form the cluster you have to _join_ the nodes.  Don't worry, you only have to join them once.  If a node, or the entire cluster, goes down it will remember the other nodes it's joined to.
 
-    for d in dev/dev{2,3}; do $d/bin/mfmn-admin join mfmn1@127.0.0.1; done
+    make dev-join-nodes
 
 Finally, to make sure they really all agree on the shape of the cluster you can ask if the _ring_ is "ready."
 
-To verify you have a 3 node cluster you can run the `member_status` command.
+To verify you have a 3 node cluster you can run the `ringready` command.
 
-    ./dev/dev1/bin/mfmn-admin member_status
+    make dev-ring-ready
 
 Now you can attach to the shell of one of the nodes and run the `ping` command.
 
-    ./dev/dev2/bin/mfmn attach
+    make node=2 dev-attach-node
     mfmn:ping().
 
 To stop all the nodes just transpose `start` for `stop`.
 
-    for d in dev/dev*; do $d/bin/mfmn stop; done
+    make dev-stop-ready
 
 This is a "Working Blog"
 ----------
