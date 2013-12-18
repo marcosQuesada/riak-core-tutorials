@@ -51,6 +51,7 @@ get(Preflist, ReqID, StatName) ->
 set(Preflist, ReqID, StatName, Val) ->
     riak_core_vnode_master:command(Preflist,
                                    {set, ReqID, StatName, Val},
+                                   {fsm, undefined, self()},
                                    ?MASTER).
 
 %% TODO: I have to look at the Sender stuff more closely again

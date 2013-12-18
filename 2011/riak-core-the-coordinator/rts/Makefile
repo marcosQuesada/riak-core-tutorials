@@ -29,7 +29,7 @@ devclean:
 dev1 dev2 dev3:
 	mkdir -p dev
 	(cd rel && ../rebar generate target_dir=../dev/$@ overlay_vars=vars/$@.config)
-	chmod 755 rel/rts/bin/rts
+
 
 dev-start-nodes:
 	for d in dev/dev* ; do \

@@ -54,6 +54,7 @@ prepare(timeout, SD0=#state{client=Client,
                                        list_to_binary(StatName)}),
     Prelist = riak_core_apl:get_apl(DocIdx, ?N, rts_stat),
     SD = SD0#state{preflist=Prelist},
+    ?PRINT({prepare, SD}),
     {next_state, execute, SD, 0}.
 
 %% @doc Execute the get reqs.
@@ -61,6 +62,7 @@ execute(timeout, SD0=#state{req_id=ReqId,
                             stat_name=StatName,
                             preflist=Prelist}) ->
     rts_stat_vnode:get(Prelist, ReqId, StatName),
+    ?PRINT({execute, SD0}),
     {next_state, waiting, SD0}.
 
 %% @doc Wait for R replies and then respond to From (original client
@@ -70,6 +72,7 @@ waiting({ok, ReqID, Val}, SD0=#state{from=From, num_r=NumR0, replies=Replies0}) 
     NumR = NumR0 + 1,
     Replies = [Val|Replies0],
     SD = SD0#state{num_r=NumR,replies=Replies},
+    ?PRINT({waiting, SD}),
     if
         NumR =:= ?R ->
             Reply =

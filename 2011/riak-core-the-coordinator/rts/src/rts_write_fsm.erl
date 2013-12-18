@@ -77,6 +77,7 @@ prepare(timeout, SD0=#state{client=Client,
                                        list_to_binary(StatName)}),
     Preflist = riak_core_apl:get_apl(DocIdx, ?N, rts_stat),
     SD = SD0#state{preflist=Preflist},
+    ?PRINT({prepare, SD}),
     {next_state, execute, SD, 0}.
 
 %% @doc Execute the write request and then go into waiting state to
@@ -86,6 +87,7 @@ execute(timeout, SD0=#state{req_id=ReqID,
                             op=Op,
                             val=Val,
                             preflist=Preflist}) ->
+    ?PRINT({execute, SD0}),
     case Val of
         undefined ->
             rts_stat_vnode:Op(Preflist, ReqID, StatName);
@@ -98,6 +100,7 @@ execute(timeout, SD0=#state{req_id=ReqID,
 waiting({ok, ReqID}, SD0=#state{from=From, num_w=NumW0}) ->
     NumW = NumW0 + 1,
     SD = SD0#state{num_w=NumW},
+    ?PRINT({waiting, SD}),
     if
         NumW =:= ?W ->
             From ! {ReqID, ok},
